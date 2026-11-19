@@ -55,4 +55,69 @@ describe("Member", () => {
       "Ana Pérez (doc. 12345678) - Plan Completo - $1500",
     );
   });
+
+   describe("discount", () => {
+    test("descuento por defecto 0", () => {
+      const resultadoObtenido = member.discount;
+      const resultadoEsperado = 0;
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+
+    test("guardar un descuento válido", () => {
+      member.discount = 10;
+      const resultadoObtenido = member.discount;
+      const resultadoEsperado = 10;
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+
+    test("aceptar un descuento de 100", () => {
+      member.discount = 100;
+      const resultadoObtenido = member.discount;
+      const resultadoEsperado = 100;
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+
+    test("dar error con un descuento negativo", () => {
+      expect(() => (member.discount = -1)).toThrow(
+        "El descuento debe ser un entero entre 0 y 100.",
+      );
+    });
+
+    test("dar error con un descuento mayor que 100", () => {
+      expect(() => (member.discount = 101)).toThrow(
+        "El descuento debe ser un entero entre 0 y 100.",
+      );
+    });
+
+    test("dar error con decimales", () => {
+      expect(() => (member.discount = 10.5)).toThrow(
+        "El descuento debe ser un entero entre 0 y 100.",
+      );
+    });
+  });
+
+  describe("discountedFee", () => {
+    test("sin descuento devolver la cuota completa", () => {
+      const resultadoObtenido = member.discountedFee;
+      const resultadoEsperado = 1500;
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+
+    test("con 10% de descuento devolver 1350", () => {
+      member.discount = 10;
+      const resultadoObtenido = member.discountedFee;
+      const resultadoEsperado = 1350;
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+  });
+
+  describe("toString", () => {
+    test("debería mostrar el descuento cuando es mayor que 0", () => {
+      member.discount = 10;
+      const resultadoObtenido = member.toString();
+      const resultadoEsperado =
+        "Ana Pérez (doc. 12345678) - Plan Completo - $1500 - Descuento: 10%";
+      expect(resultadoObtenido).toBe(resultadoEsperado);
+    });
+  });
 });

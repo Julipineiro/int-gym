@@ -6,6 +6,10 @@ export const PLAN_LABELS: Record<Plan, string> = {
   premium: "Premium",
 };
 
+const DESCUENTOMIN = 0;
+const DESCUENTOMAX = 100;
+const PORCENTAJE = 100;
+
 export type MemberData = {
   name: string;
   documentId: string;
@@ -78,10 +82,21 @@ export class Member {
   }
 
   set discount(_value: number) {
-    // TODO: validar y guardar el descuento
+    if (!Number.isInteger(_value) || _value < DESCUENTOMIN || _value > DESCUENTOMAX) {
+      throw new Error("El descuento debe ser un entero entre 0 y 100.");
+    }
+    this._discount = _value;
+  }
+
+  get discountedFee(): number {
+    return this.monthlyFee - (this.monthlyFee * this.discount) / PORCENTAJE;
   }
 
   toString(): string {
-    return `${this.name} (doc. ${this.documentId}) - Plan ${PLAN_LABELS[this.plan]} - $${this.monthlyFee}`;
+    const texto = `${this.name} (doc. ${this.documentId}) - Plan ${PLAN_LABELS[this.plan]} - $${this.monthlyFee}`;
+    if (this.discount > DESCUENTOMIN) {
+      return `${texto} - Descuento: ${this.discount}%`;
+    }
+    return texto;
   }
 }
